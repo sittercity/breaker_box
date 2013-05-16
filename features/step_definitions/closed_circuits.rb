@@ -8,6 +8,23 @@ class TestTask
   end
 end
 
+class FailureCallback
+  attr_accessor :error
+
+  def call(error)
+    @error = error
+  end
+end
+
+class FailingTask < TestTask
+  def call
+    @has_run = true
+    raise CircuitBreakerException
+  end
+
+  class CircuitBreakerException < Exception; end
+end
+
 Given(/^a circuit that is currently closed$/) do
   @circuit = BreakerBox.circuit_for(:test)
 end
@@ -27,15 +44,17 @@ Then(/^I should see that the circuit remains closed$/) do
 end
 
 When(/^I provide a failure callback$/) do
-    pending # express the regexp above with the code you wish you had
+  @failure_callback = FailureCallback.new
+  @circuit.failure_callback = @failure_callback
 end
 
 When(/^I run a failing task through the circuit$/) do
-    pending # express the regexp above with the code you wish you had
+  @task = FailingTask.new
+  @circuit.run @task
 end
 
 Then(/^I should see that the failure callback has been called with the failure exception$/) do
-    pending # express the regexp above with the code you wish you had
+  @circuit.failure_callback.error.should be_a(FailingTask::CircuitBreakerException)
 end
 
 Given(/^that is configured to open after (\d+) failures$/) do |arg1|
