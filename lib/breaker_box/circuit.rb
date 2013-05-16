@@ -7,7 +7,7 @@ module BreakerBox
       begin
         proc_or_lambda.call
       rescue Exception => e
-        failure_callback.call(e)
+        failure_callback.call(e) if failure_callback
       end
     end
 

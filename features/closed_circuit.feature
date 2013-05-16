@@ -17,15 +17,15 @@ Feature: Closed Circuits
     And I should see that the failure callback has been called with the failure exception
 
   Scenario: Closed Circuit Fails Once and Tries Again
-    Given a circuit that is currently closed
-    And that is configured to open after 2 failures
+    Given a circuit that is configured to open after 2 failures
+    And that is currently closed
     When I run a failing task through the circuit
     Then I should see that the task has been run
     And I should see that the circuit remains closed
 
   Scenario: Closed Circuit Fails and Opens
-    Given a circuit that is currently closed
-    And that is configured to open after 1 failure
+    Given a circuit that is configured to open after 1 failure
+    And that is currently closed
     When I run a failing task through the circuit
     Then I should see that the task has been run
     And I should see that the circuit has opened

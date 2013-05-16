@@ -57,14 +57,15 @@ Then(/^I should see that the failure callback has been called with the failure e
   @circuit.failure_callback.error.should be_a(FailingTask::CircuitBreakerException)
 end
 
-Given(/^that is configured to open after (\d+) failures$/) do |arg1|
-    pending # express the regexp above with the code you wish you had
+Given(/^a circuit that is configured to open after (\d+) failures?$/) do |failure_count|
+  BreakerBox.configure(:test, :open_after => failure_count.to_i)
 end
 
-Given(/^that is configured to open after (\d+) failure$/) do |arg1|
-    pending # express the regexp above with the code you wish you had
+Given(/^that is currently closed$/) do
+  @circuit = BreakerBox.circuit_for(:test)
 end
 
 Then(/^I should see that the circuit has opened$/) do
-    pending # express the regexp above with the code you wish you had
+  new_circuit = BreakerBox.circuit_for(:test)
+  new_circuit.closed?.should be_false
 end
