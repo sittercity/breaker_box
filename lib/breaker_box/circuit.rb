@@ -29,6 +29,7 @@ module BreakerBox
 
     def options=(options)
       @options = options
+      @failure_callback = options[:on_failure] if options[:on_failure]
     end
 
     protected
