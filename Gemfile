@@ -9,4 +9,5 @@ group :test do
   gem 'rspec-extra-formatters', '0.4'
   gem 'simplecov', :require => false
   gem 'simplecov-rcov', :require => false
+  gem 'timecop'
 end

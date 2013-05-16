@@ -1,6 +1,5 @@
 *.gem
 *.rbc
-.bundle
 .config
 coverage
 InstalledFiles
@@ -11,6 +10,7 @@ spec/reports
 test/tmp
 test/version_tmp
 tmp
+bin
 
 # YARD artifacts
 .yardoc

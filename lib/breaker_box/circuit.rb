@@ -3,16 +3,51 @@ module BreakerBox
 
     attr_accessor :failure_callback
 
+    def initialize
+      @state = :closed
+      @failures = 0
+      @options = {
+        :open_after => 2,
+        :timeout => 60 * 60 * 1 # 1 hour
+      }
+    end
+
     def run(proc_or_lambda)
-      begin
-        proc_or_lambda.call
-      rescue Exception => e
-        failure_callback.call(e) if failure_callback
+      if closed? || half_open?
+        begin
+          proc_or_lambda.call
+        rescue Exception => e
+          fail
+          failure_callback.call(e) if failure_callback
+        end
       end
     end
 
     def closed?
-      true
+      @state == :closed
+    end
+
+    def options=(options)
+      @options = options
+    end
+
+    protected
+
+    def fail
+      @failures+=1
+      @failed_at = Time.now.utc
+
+      if @failures == @options[:open_after]
+        @state = :open
+      end
+    end
+
+    def half_open?
+      @state == :open && timeout_expired?
+    end
+
+    def timeout_expired?
+      @failed_at + @options[:timeout] < Time.now.utc
     end
   end
 end
