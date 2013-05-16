@@ -23,7 +23,7 @@ Feature: Closed Circuits
     Then I should see that the task has been run
     And I should see that the circuit remains closed
 
-  Scenario: Closed Circuit Fails Once and Tries Again
+  Scenario: Closed Circuit Fails and Opens
     Given a circuit that is currently closed
     And that is configured to open after 1 failure
     When I run a failing task through the circuit
