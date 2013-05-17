@@ -12,8 +12,9 @@ describe BreakerBox::Circuit do
   subject {
     breaker = described_class.new(persistence)
     breaker.options = {
-      :open_after => threshold,
-      :timeout => 2,
+      :failure_threshold_count => threshold,
+      :failure_threshold_time => 120,
+      :retry_after => 2,
       :on_failure => failure_callback
     }
     breaker

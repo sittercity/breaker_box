@@ -4,9 +4,9 @@ module BreakerBox
       @state = :closed
       @persistence = persistence
       @options = {
-        :open_after => 2,
-        :within_seconds => 120,
-        :timeout => 60 * 60 * 1, # 1 hour
+        :failure_threshold_count => 2,
+        :failure_threshold_time => 120,
+        :retry_after => 60 * 60 * 1, # 1 hour
       }
     end
 
@@ -47,7 +47,7 @@ module BreakerBox
     def fail
       @persistence.fail!
 
-      if pertinent_failures.count >= @options[:open_after]
+      if pertinent_failures.count >= @options[:failure_threshold_count]
         @state = :open
       end
     end
@@ -57,11 +57,11 @@ module BreakerBox
     end
 
     def pertinent_failures
-      @persistence.all_within(@options[:within_seconds])
+      @persistence.all_within(@options[:failure_threshold_time])
     end
 
     def timeout_expired?
-      failed_at + @options[:timeout] < Time.now.utc
+      failed_at + @options[:retry_after] < Time.now.utc
     end
 
     def failed_at
