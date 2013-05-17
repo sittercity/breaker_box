@@ -75,4 +75,13 @@ describe BreakerBox::Circuit do
     subject.run failing_task
     subject.closed?.should be_true
   end
+
+  it 'will tolerate fewer failures thant the threshold within the time interval' do
+    subject.run failing_task
+
+    Timecop.freeze Time.now.utc + 121
+
+    subject.run failing_task
+    subject.closed?.should be_true
+  end
 end

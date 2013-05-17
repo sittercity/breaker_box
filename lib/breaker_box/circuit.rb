@@ -5,10 +5,11 @@ module BreakerBox
 
     def initialize
       @state = :closed
-      @failures = 0
+      @failures = []
       @options = {
         :open_after => 2,
-        :timeout => 60 * 60 * 1 # 1 hour
+        :within_seconds => 120,
+        :timeout => 60 * 60 * 1, # 1 hour
       }
     end
 
@@ -29,17 +30,16 @@ module BreakerBox
     end
 
     def options=(options)
-      @options = options
+      @options = @options.merge(options)
       @failure_callback = options[:on_failure] if options[:on_failure]
     end
 
     protected
 
     def fail
-      @failures+=1
-      @failed_at = Time.now.utc
+      @failures << Time.now.utc
 
-      if @failures == @options[:open_after]
+      if pertinent_failures.count == @options[:open_after]
         @state = :open
       end
     end
@@ -48,13 +48,21 @@ module BreakerBox
       @state == :open && timeout_expired?
     end
 
+    def pertinent_failures
+      @failures.select {|f| Time.now.utc - @options[:within_seconds] < f}
+    end
+
     def timeout_expired?
-      @failed_at + @options[:timeout] < Time.now.utc
+      failed_at + @options[:timeout] < Time.now.utc
+    end
+
+    def failed_at
+      @failures.last
     end
 
     def reclose
       @state = :closed
-      @failures = 0
+      @failures = []
     end
   end
 end
