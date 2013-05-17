@@ -1,11 +1,33 @@
 module BreakerBox
   class Circuit
+    class StateMachine
+      attr_reader :state
+      def initialize(state)
+        @state = state
+      end
+
+      def closed?
+        @state == :closed
+      end
+
+      def close!
+        @state = :closed
+      end
+
+      def open?
+        @state == :open
+      end
+
+      def open!
+        @state = :open
+      end
+    end
 
     attr_accessor :failure_callback
 
-    def initialize
-      @state = :closed
-      @failures = []
+    def initialize(state_machine=StateMachine.new(:closed), failures=[])
+      @state_machine = state_machine
+      @failures = failures
       @options = {
         :open_after => 2,
         :within_seconds => 120,
@@ -26,7 +48,7 @@ module BreakerBox
     end
 
     def closed?
-      @state == :closed
+      @state_machine.closed?
     end
 
     def options=(options)
@@ -40,12 +62,12 @@ module BreakerBox
       @failures << Time.now.utc
 
       if pertinent_failures.count == @options[:open_after]
-        @state = :open
+        @state_machine.open!
       end
     end
 
     def half_open?
-      @state == :open && timeout_expired?
+      @state_machine.open? && timeout_expired?
     end
 
     def pertinent_failures
@@ -53,16 +75,16 @@ module BreakerBox
     end
 
     def timeout_expired?
-      failed_at + @options[:timeout] < Time.now.utc
+      last_failed_at + @options[:timeout] < Time.now.utc
     end
 
-    def failed_at
+    def last_failed_at
       @failures.last
     end
 
     def reclose
-      @state = :closed
-      @failures = []
+      @state_machine.close!
+      @failures.clear
     end
   end
 end
