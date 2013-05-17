@@ -7,7 +7,7 @@ describe BreakerBox::Circuit do
   let(:failure_callback) { double(:callback, :call => true) }
   let(:threshold) { 2 }
 
-  let(:persistence) { MemoryPersistence.new }
+  let(:persistence) { BreakerBox::MemoryStorage.new }
 
   subject {
     breaker = described_class.new(persistence)
