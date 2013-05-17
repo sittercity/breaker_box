@@ -1,38 +1,28 @@
 require 'breaker_box'
 require 'timecop'
+require 'breaker_box/memory_storage'
 
 Before do
   BreakerBox.reset!
+  BreakerBox.persistence_factory = PersistenceFactory
 end
 
-class TestTask
-  attr_accessor :has_run
+class PersistenceFactory
+  @storage = {}
 
-  def call
-    @has_run = true
-  end
-end
-
-class FailureCallback
-  attr_accessor :error
-
-  def call(error)
-    @error = error
-  end
-end
-
-class FailingTask < TestTask
-  def call
-    @has_run = true
-    raise CircuitBreakerException
+  def self.storage_for(name)
+    @storage[name] ||= BreakerBox::MemoryStorage.new
   end
 
-  class CircuitBreakerException < Exception; end
+  def self.reset!
+    @storage = {}
+  end
 end
 
 class MyWorld
   def fail(breaker)
     while breaker.closed? do
+      breaker.failure_callback = lambda {|arg| }
       breaker.run FailingTask.new
     end
   end

@@ -7,11 +7,14 @@ describe BreakerBox::Circuit do
   let(:failure_callback) { double(:callback, :call => true) }
   let(:threshold) { 2 }
 
+  let(:persistence) { BreakerBox::MemoryStorage.new }
+
   subject {
-    breaker = described_class.new
+    breaker = described_class.new(persistence)
     breaker.options = {
-      :open_after => threshold,
-      :timeout => 2,
+      :failure_threshold_count => threshold,
+      :failure_threshold_time => 120,
+      :retry_after => 2,
       :on_failure => failure_callback
     }
     breaker
@@ -39,6 +42,11 @@ describe BreakerBox::Circuit do
   it 'runs a failure callback if specified when the task fails' do
     failure_callback.should_receive(:call).once.with(kind_of(FailingTask::CircuitBreakerException))
     subject.run failing_task
+  end
+
+  it 'reraises the exception if a failure callback is not provided' do
+    subject.failure_callback = nil
+    lambda { subject.run failing_task }.should raise_error(FailingTask::CircuitBreakerException)
   end
 
   it 'does not run the task when open' do

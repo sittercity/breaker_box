@@ -23,15 +23,16 @@ end
 
 When(/^I run a failing task through the circuit$/) do
   @task = FailingTask.new
+  @circuit.failure_callback = @failure_callback || lambda { |e| }
   @circuit.run @task
 end
 
 Then(/^I should see that the failure callback has been called with the failure exception$/) do
-  @circuit.failure_callback.error.should be_a(FailingTask::CircuitBreakerException)
+  @failure_callback.error.should be_a(FailingTask::CircuitBreakerException)
 end
 
 Given(/^a circuit that is configured to open after (\d+) failures?$/) do |failure_count|
-  BreakerBox.configure(:test, :open_after => failure_count.to_i)
+  BreakerBox.configure(:test, :failure_threshold_count => failure_count.to_i)
 end
 
 Given(/^that is currently closed$/) do

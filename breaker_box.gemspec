@@ -14,4 +14,5 @@ Gem::Specification.new do |s|
   s.summary = 'Sittercity\'s Circuit Breaker Gem'
   s.files = Dir['lib/**/*.rb']
   s.require_paths = ['lib', 'spec']
+  s.add_development_dependency('json', '1.7.7')
 end
