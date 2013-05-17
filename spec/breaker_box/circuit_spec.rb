@@ -43,6 +43,11 @@ describe BreakerBox::Circuit do
     subject.run failing_task
   end
 
+  it 'reraises the exception if a failure callback is not provided' do
+    subject.failure_callback = nil
+    lambda { subject.run failing_task }.should raise_error(FailingTask::CircuitBreakerException)
+  end
+
   it 'does not run the task when open' do
     (1..threshold).each do |n|
       subject.run failing_task

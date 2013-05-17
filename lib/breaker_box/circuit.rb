@@ -1,8 +1,5 @@
 module BreakerBox
   class Circuit
-
-    attr_accessor :failure_callback
-
     def initialize(persistence)
       @state = :closed
       @persistence = persistence
@@ -20,7 +17,11 @@ module BreakerBox
           reclose if half_open?
         rescue Exception => e
           fail
-          failure_callback.call(e) if failure_callback
+          if failure_callback
+            failure_callback.call(e)
+          else
+            raise e
+          end
         end
       end
     end
@@ -31,7 +32,14 @@ module BreakerBox
 
     def options=(options)
       @options = @options.merge(options)
-      @failure_callback = options[:on_failure] if options[:on_failure]
+    end
+
+    def failure_callback
+      @options[:on_failure]
+    end
+
+    def failure_callback=(callback)
+      @options[:on_failure] = callback
     end
 
     protected
