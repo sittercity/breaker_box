@@ -1,6 +1,3 @@
-require 'timecop'
-require 'breaker_box/memory_storage'
-
 class TestTask
   attr_accessor :has_run
 
@@ -14,7 +11,6 @@ class FailureCallback
 
   def call(error)
     @error = error
-    raise error unless error.is_a? FailingTask::CircuitBreakerException
   end
 end
 

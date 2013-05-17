@@ -1,15 +1,12 @@
 module BreakerBox
   class Circuit
-
-    attr_accessor :failure_callback
-
-    def initialize
+    def initialize(persistence)
       @state = :closed
-      @failures = []
+      @persistence = persistence
       @options = {
-        :open_after => 2,
-        :within_seconds => 120,
-        :timeout => 60 * 60 * 1, # 1 hour
+        :failure_threshold_count => 2,
+        :failure_threshold_time => 120,
+        :retry_after => 60 * 60 * 1, # 1 hour
       }
     end
 
@@ -20,7 +17,11 @@ module BreakerBox
           reclose if half_open?
         rescue Exception => e
           fail
-          failure_callback.call(e) if failure_callback
+          if failure_callback
+            failure_callback.call(e)
+          else
+            raise e
+          end
         end
       end
     end
@@ -31,15 +32,22 @@ module BreakerBox
 
     def options=(options)
       @options = @options.merge(options)
-      @failure_callback = options[:on_failure] if options[:on_failure]
+    end
+
+    def failure_callback
+      @options[:on_failure]
+    end
+
+    def failure_callback=(callback)
+      @options[:on_failure] = callback
     end
 
     protected
 
     def fail
-      @failures << Time.now.utc
+      @persistence.fail!
 
-      if pertinent_failures.count == @options[:open_after]
+      if pertinent_failures.count >= @options[:failure_threshold_count]
         @state = :open
       end
     end
@@ -49,20 +57,20 @@ module BreakerBox
     end
 
     def pertinent_failures
-      @failures.select {|f| Time.now.utc - @options[:within_seconds] < f}
+      @persistence.all_within(@options[:failure_threshold_time])
     end
 
     def timeout_expired?
-      failed_at + @options[:timeout] < Time.now.utc
+      failed_at + @options[:retry_after] < Time.now.utc
     end
 
     def failed_at
-      @failures.last
+      @persistence.last_failure_time
     end
 
     def reclose
       @state = :closed
-      @failures = []
+      @persistence.clear!
     end
   end
 end

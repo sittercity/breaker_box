@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    breaker_box (0.0.1)
+    breaker_box (1.0.0)
 
 GEM
   remote: https://rubygems.org/
@@ -20,6 +20,7 @@ GEM
     gherkin (2.12.0)
       multi_json (~> 1.3)
     httpclient (2.3.3)
+    json (1.7.7)
     multi_json (1.7.3)
     rack (1.5.2)
     rack-protection (1.5.0)
@@ -53,6 +54,7 @@ DEPENDENCIES
   breaker_box!
   cucumber
   geminabox
+  json (= 1.7.7)
   rspec
   rspec-extra-formatters (= 0.4)
   simplecov
