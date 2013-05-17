@@ -45,7 +45,7 @@ module BreakerBox
     protected
 
     def fail
-      @persistence.fail
+      @persistence.fail!
 
       if pertinent_failures.count >= @options[:open_after]
         @state = :open
@@ -57,7 +57,7 @@ module BreakerBox
     end
 
     def pertinent_failures
-      @persistence.all.select {|f| Time.now.utc - @options[:within_seconds] < f}
+      @persistence.all_within(@options[:within_seconds])
     end
 
     def timeout_expired?
@@ -65,12 +65,12 @@ module BreakerBox
     end
 
     def failed_at
-      @persistence.all.last
+      @persistence.last_failure_time
     end
 
     def reclose
       @state = :closed
-      @persistence.clear
+      @persistence.clear!
     end
   end
 end

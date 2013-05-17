@@ -4,16 +4,20 @@ module BreakerBox
       @failures = []
     end
 
-    def fail
+    def fail!
       @failures << Time.now.utc
     end
 
-    def all
-      @failures
+    def clear!
+      @failures = []
     end
 
-    def clear
-      @failures = []
+    def all_within(seconds)
+      @failures.select {|f| Time.now.utc - seconds < f}
+    end
+
+    def last_failure_time
+      @failures.last
     end
   end
 end
