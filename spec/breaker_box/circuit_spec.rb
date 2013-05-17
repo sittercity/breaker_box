@@ -7,8 +7,10 @@ describe BreakerBox::Circuit do
   let(:failure_callback) { double(:callback, :call => true) }
   let(:threshold) { 2 }
 
+  let(:persistence) { MemoryPersistence.new }
+
   subject {
-    breaker = described_class.new
+    breaker = described_class.new(persistence)
     breaker.options = {
       :open_after => threshold,
       :timeout => 2,

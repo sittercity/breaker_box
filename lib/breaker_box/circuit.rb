@@ -3,9 +3,9 @@ module BreakerBox
 
     attr_accessor :failure_callback
 
-    def initialize
+    def initialize(persistence)
       @state = :closed
-      @failures = []
+      @persistence = persistence
       @options = {
         :open_after => 2,
         :within_seconds => 120,
@@ -37,9 +37,9 @@ module BreakerBox
     protected
 
     def fail
-      @failures << Time.now.utc
+      @persistence.fail
 
-      if pertinent_failures.count == @options[:open_after]
+      if pertinent_failures.count >= @options[:open_after]
         @state = :open
       end
     end
@@ -49,7 +49,7 @@ module BreakerBox
     end
 
     def pertinent_failures
-      @failures.select {|f| Time.now.utc - @options[:within_seconds] < f}
+      @persistence.all.select {|f| Time.now.utc - @options[:within_seconds] < f}
     end
 
     def timeout_expired?
@@ -57,12 +57,12 @@ module BreakerBox
     end
 
     def failed_at
-      @failures.last
+      @persistence.all.last
     end
 
     def reclose
       @state = :closed
-      @failures = []
+      @persistence.clear
     end
   end
 end

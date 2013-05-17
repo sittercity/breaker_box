@@ -13,6 +13,7 @@ class FailureCallback
 
   def call(error)
     @error = error
+    raise error unless error.is_a? FailingTask::CircuitBreakerException
   end
 end
 
@@ -23,4 +24,22 @@ class FailingTask < TestTask
   end
 
   class CircuitBreakerException < Exception; end
+end
+
+class MemoryPersistence
+  def initialize
+    @failures = []
+  end
+
+  def fail
+    @failures << Time.now.utc
+  end
+
+  def all
+    @failures
+  end
+
+  def clear
+    @failures = []
+  end
 end
