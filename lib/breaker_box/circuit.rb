@@ -16,6 +16,7 @@ module BreakerBox
       if closed? || half_open?
         begin
           proc_or_lambda.call
+          reclose if half_open?
         rescue Exception => e
           fail
           failure_callback.call(e) if failure_callback
@@ -49,6 +50,11 @@ module BreakerBox
 
     def timeout_expired?
       @failed_at + @options[:timeout] < Time.now.utc
+    end
+
+    def reclose
+      @state = :closed
+      @failures = 0
     end
   end
 end

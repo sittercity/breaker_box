@@ -60,4 +60,19 @@ describe BreakerBox::Circuit do
     subject.run task
     task.has_run.should be_true
   end
+
+  it 'does not reopen immediately after reclosing' do
+    (1..threshold).each do |n|
+      subject.run failing_task
+    end
+
+    Timecop.freeze Time.now.utc + 5
+
+    subject.run task
+    task.has_run.should be_true
+    subject.closed?.should be_true
+
+    subject.run failing_task
+    subject.closed?.should be_true
+  end
 end
