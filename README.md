@@ -27,8 +27,8 @@ BreakerBox.persistence_factory = PersistenceFactory
 The classes that `storage_for` returns must conform to the persistence interface. Specifically, the classes will need these methods:
 
  - `fail!`: Called when a breaker task fails
- - `clear!: Clears all previous failures
- - `all_within`: Returns an array of failures that happen within a timestamp
+ - `clear!`: Clears all previous failures
+ - `all_since`: Returns an array of failures that happen after a timestamp
  - `last_failure_time`: returns the last time a failure occured on this breaker
 
 Please looks in `BreakerBox::MemoryStorage` for an example implmentation.

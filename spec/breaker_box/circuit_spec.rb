@@ -31,7 +31,7 @@ describe BreakerBox::Circuit do
     subject.closed?.should be_true
   end
 
-  it 'opens when the fail threshhold is met' do
+  it 'opens when the fail threshold is met' do
     (1..threshold).each do |n|
       subject.run failing_task
     end
@@ -44,7 +44,7 @@ describe BreakerBox::Circuit do
     subject.run failing_task
   end
 
-  it 'reraises the exception if a failure callback is not provided' do
+  it 're-raises the exception if a failure callback is not provided' do
     subject.failure_callback = nil
     lambda { subject.run failing_task }.should raise_error(FailingTask::CircuitBreakerException)
   end
@@ -69,7 +69,7 @@ describe BreakerBox::Circuit do
     task.has_run.should be_true
   end
 
-  it 'does not reopen immediately after reclosing' do
+  it 'does not reopen immediately after re-closing' do
     (1..threshold).each do |n|
       subject.run failing_task
     end
@@ -84,7 +84,7 @@ describe BreakerBox::Circuit do
     subject.closed?.should be_true
   end
 
-  it 'will tolerate fewer failures thant the threshold within the time interval' do
+  it 'will tolerate fewer failures than the threshold within the time interval' do
     subject.run failing_task
 
     Timecop.freeze Time.now.utc + 121

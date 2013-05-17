@@ -45,7 +45,7 @@ module BreakerBox
     protected
 
     def fail
-      @persistence.fail!
+      @persistence.fail!(Time.now.utc)
 
       if pertinent_failures.count >= @options[:failure_threshold_count]
         @state = :open
@@ -57,7 +57,7 @@ module BreakerBox
     end
 
     def pertinent_failures
-      @persistence.all_within(@options[:failure_threshold_time])
+      @persistence.all_since(Time.now.utc - @options[:failure_threshold_time])
     end
 
     def timeout_expired?
