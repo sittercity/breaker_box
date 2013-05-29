@@ -35,10 +35,10 @@ Please looks in `BreakerBox::MemoryStorage` for an example implmentation.
 
 ### BreakerBoxes
 
-To use a breaker box, call `BreakerBox::circuit_for(name)`. This will return a breaker that can wrap a task. Call your task with the breaker box like so:
+To use a breaker box, call `BreakerBox.circuit_for(name)`. This will return a breaker that can wrap a task. Call your task with the breaker box like so:
 
 ```ruby
-  breaker = BreakerBox::circuit_for(:testing)
+  breaker = BreakerBox.circuit_for(:testing)
   breaker.run SendEmail
 ```
 
@@ -47,7 +47,7 @@ To use a breaker box, call `BreakerBox::circuit_for(name)`. This will return a b
 If a task fails and you want some action, you can assign a failure callback to a breaker:
 
 ```ruby
-  breaker = BreakerBox::circuit_for(:testing)
+  breaker = BreakerBox.circuit_for(:testing)
   breaker.failure_callback = lambda { |e| Logger.alert('Email failed to send!') }
   breaker.run SendEmail
 ```
