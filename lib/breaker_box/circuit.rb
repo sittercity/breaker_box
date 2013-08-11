@@ -1,28 +1,29 @@
 module BreakerBox
   class Circuit
     def initialize(persistence)
-      @state = :closed
       @persistence = persistence
       @options = {
         :failure_threshold_count => 2,
         :failure_threshold_time => 120,
         :retry_after => 60 * 60 * 1, # 1 hour
       }
+      @state = state
     end
 
     def run(proc_or_lambda)
       if closed? || half_open?
         begin
-          proc_or_lambda.call
+          response = proc_or_lambda.call
           reclose if half_open?
         rescue Exception => e
           fail
           if failure_callback
-            failure_callback.call(e)
+            response = failure_callback.call(e)
           else
             raise e
           end
         end
+        response
       end
     end
 
@@ -43,6 +44,14 @@ module BreakerBox
     end
 
     protected
+
+    def state
+      if pertinent_failures.count >= @options[:failure_threshold_count]
+        @state = :open
+      else
+        @state = :closed
+      end
+    end
 
     def fail
       @persistence.fail!(Time.now.utc)

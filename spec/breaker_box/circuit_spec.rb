@@ -20,6 +20,17 @@ describe BreakerBox::Circuit do
     breaker
   }
 
+  it 'gets constructed with state closed' do
+    subject.closed?.should be_true
+  end
+
+  it 'gets constructed with state open' do
+    persistence_with_failures = double("BreakerBox::MemoryStorage")
+    persistence_with_failures.stub(:all_since).and_return([1, 1, 1, 1,])
+    subject = described_class.new(persistence_with_failures)
+    subject.closed?.should be_false
+  end
+
   it 'runs the task and stays closed when the task passes' do
     subject.run task
     task.has_run.should be_true
