@@ -7,7 +7,6 @@ module BreakerBox
         :failure_threshold_time => 120,
         :retry_after => 60 * 60 * 1, # 1 hour
       }
-      @state = state
     end
 
     def run(proc_or_lambda)
@@ -28,7 +27,7 @@ module BreakerBox
     end
 
     def closed?
-      @state == :closed
+      state == :closed
     end
 
     def options=(options)
@@ -47,9 +46,9 @@ module BreakerBox
 
     def state
       if pertinent_failures.count >= @options[:failure_threshold_count]
-        @state = :open
+        :open
       else
-        @state = :closed
+        :closed
       end
     end
 
@@ -57,12 +56,12 @@ module BreakerBox
       @persistence.fail!(Time.now.utc)
 
       if pertinent_failures.count >= @options[:failure_threshold_count]
-        @state = :open
+        :open
       end
     end
 
     def half_open?
-      @state == :open && timeout_expired?
+      state == :open && timeout_expired?
     end
 
     def pertinent_failures
@@ -78,7 +77,6 @@ module BreakerBox
     end
 
     def reclose
-      @state = :closed
       @persistence.clear!
     end
   end
