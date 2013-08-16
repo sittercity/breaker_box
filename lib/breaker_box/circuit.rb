@@ -54,10 +54,6 @@ module BreakerBox
 
     def fail
       @persistence.fail!(Time.now.utc)
-
-      if pertinent_failures.count >= @options[:failure_threshold_count]
-        :open
-      end
     end
 
     def half_open?
