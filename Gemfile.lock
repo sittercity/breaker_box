@@ -3,6 +3,7 @@ PATH
   specs:
     breaker_box (1.1.0)
       multi_json (~> 1.9)
+      redis (~> 3.0.7)
 
 GEM
   remote: https://rubygems.org/
@@ -26,6 +27,7 @@ GEM
     rack (1.5.2)
     rack-protection (1.5.0)
       rack
+    redis (3.0.7)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)

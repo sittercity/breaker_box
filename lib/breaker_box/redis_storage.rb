@@ -1,3 +1,4 @@
+require 'redis'
 require 'multi_json'
 
 module BreakerBox
@@ -9,31 +10,20 @@ module BreakerBox
     end
 
     def fail!(timestamp)
-      set_storage(get_storage.push timestamp)
+      @redis.rpush(@key, timestamp.to_s)
     end
 
     def clear!
-      set_storage []
+      @redis.del(@key)
     end
 
     def all_since(timestamp)
-      get_storage.select {|f| timestamp < f}
+      @redis.get(@key).select {|f| timestamp < f}
     end
 
     def last_failure_time
-      get_storage.last
+      @redis.lindex(@key, -1)
     end
 
-    private
-
-    def get_storage
-      value = @redis.get(@key)
-      return [] unless value
-      MultiJson.load value
-    end
-
-    def set_storage(value)
-      @redis.set(@key, MultiJson.dump(value))
-    end
   end
 end
