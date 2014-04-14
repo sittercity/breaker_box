@@ -1,6 +1,5 @@
 require 'redis'
 require 'date'
-require 'multi_json'
 
 module BreakerBox
   module Storage
@@ -21,7 +20,7 @@ module BreakerBox
 
       def all_since(timestamp)
         all_times = @redis.lrange(@key,0,-1).collect { |i| DateTime.parse(i).to_time.utc }
-        all_times.compact.select {|f| timestamp < f}
+        all_times.select {|f| timestamp < f}
       end
 
       def last_failure_time

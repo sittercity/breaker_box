@@ -2,7 +2,6 @@ PATH
   remote: .
   specs:
     breaker_box (1.1.0)
-      multi_json (~> 1.9)
       redis (~> 3.0.7)
 
 GEM
