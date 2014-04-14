@@ -6,14 +6,21 @@ Circuit breakers in ruby
 
 ### Persistence Factories
 
-First, set up a persistence factory class. You will need to map persistence classes to breaker names. Here's a simple example:
+There are two persistence factories to choose from. In-memory storage and redis storage. To use one or the other you just need to include them:
+
+```ruby
+include 'breakerbox/persistence_factories/memory'
+include 'breakerbox/persistence_factories/redis'
+```
+
+You can also create your own. Here is the memory factory as a simple example:
 
 ```ruby
 class PersistenceFactory
   @storage = {}
 
   def self.storage_for(name)
-    @storage[name] ||= BreakerBox::MemoryStorage.new
+    @storage[name] ||= BreakerBox::Storage::Memory.new
   end
 
   def self.reset!
