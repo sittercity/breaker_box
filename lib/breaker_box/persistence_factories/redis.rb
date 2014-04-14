@@ -7,7 +7,7 @@ module BreakerBox
       class << self
 
         def storage_for(name)
-          BreakerBox::Storage::Redis.new(redis, "#{prefix}#{name}")
+          BreakerBox::Storage::Redis.new(redis, "#{prefix}:#{name}")
         end
 
         def reset!
@@ -21,7 +21,7 @@ module BreakerBox
         end
 
         def prefix
-          "breakerbox-storage-"
+          "breakerbox:storage:circuit"
         end
 
       end
