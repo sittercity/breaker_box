@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'breaker_box/redis_storage'
+require 'breaker_box/storage/redis'
 
-describe BreakerBox::RedisStorage do
+describe BreakerBox::Storage::Redis do
 
   let(:key) { double(:key) }
   let(:redis) { double(:redis, rpush: nil, del: nil) }
@@ -15,7 +15,7 @@ describe BreakerBox::RedisStorage do
     subject.fail!(time)
   end
 
-  it "clears the redis object" do
+  it "clears the failures" do
     redis.should_receive(:del).with(key)
     subject.clear!
   end
@@ -28,7 +28,7 @@ describe BreakerBox::RedisStorage do
   it "gets the failure times in a given time span" do
     thirty_mins_ago = time - 1800
     two_hours_ago = time - 7200
-    redis.stub(:get).and_return([one_hour_ago,time])
+    redis.stub(:lrange).and_return([one_hour_ago.to_s,time.to_s])
     subject.all_since(thirty_mins_ago).should == [time]
     subject.all_since(two_hours_ago).should == [one_hour_ago,time]
   end

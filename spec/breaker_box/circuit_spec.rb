@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'breaker_box/circuit'
+require 'breaker_box/storage/memory'
 
 describe BreakerBox::Circuit do
   let(:task) { TestTask.new }
@@ -7,7 +8,7 @@ describe BreakerBox::Circuit do
   let(:failure_callback) { double(:callback, :call => true) }
   let(:threshold) { 2 }
 
-  let(:persistence) { BreakerBox::MemoryStorage.new }
+  let(:persistence) { BreakerBox::Storage::Memory.new }
 
   subject {
     breaker = described_class.new(persistence)
@@ -25,7 +26,7 @@ describe BreakerBox::Circuit do
   end
 
   it 'gets constructed with state open' do
-    persistence_with_failures = double("BreakerBox::MemoryStorage")
+    persistence_with_failures = double("BreakerBox::Storage::Memory")
     persistence_with_failures.stub(:all_since).and_return([1, 1, 1, 1,])
     subject = described_class.new(persistence_with_failures)
     subject.closed?.should be_false
