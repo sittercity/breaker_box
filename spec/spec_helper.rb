@@ -1,7 +1,11 @@
 require 'timecop'
 require 'simplecov'
+require 'simplecov-rcov'
 
-SimpleCov.start
+SimpleCov.start do
+  coverage_dir 'reports/coverage'
+  formatter SimpleCov::Formatter::RcovFormatter
+end
 
 class TestTask
   attr_accessor :has_run
