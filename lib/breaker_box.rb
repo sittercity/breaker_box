@@ -3,19 +3,19 @@ require 'breaker_box/circuit'
 module BreakerBox
   @breakers = {}
 
-  def self.reset!
-    @breakers = {}
-  end
+  class << self
+    attr_accessor :persistence_factory
 
-  def self.persistence_factory=(factory)
-    @persistence_factory = factory
-  end
+    def reset!
+      @breakers = {}
+    end
 
-  def self.circuit_for(circuit_name)
-    @breakers[circuit_name] ||= BreakerBox::Circuit.new(@persistence_factory.storage_for(circuit_name))
-  end
+    def circuit_for(circuit_name)
+      @breakers[circuit_name] ||= BreakerBox::Circuit.new(@persistence_factory.storage_for(circuit_name))
+    end
 
-  def self.configure(breaker_name, options)
-    circuit_for(breaker_name).options = options
+    def configure(breaker_name, options)
+      circuit_for(breaker_name).options = options
+    end
   end
 end

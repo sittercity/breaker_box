@@ -1,5 +1,4 @@
 require 'timecop'
-require 'breaker_box/memory_storage'
 
 class TestTask
   attr_accessor :has_run

@@ -1,23 +1,7 @@
-require 'breaker_box'
 require 'timecop'
-require 'breaker_box/memory_storage'
-
-Before do
-  BreakerBox.reset!
-  BreakerBox.persistence_factory = PersistenceFactory
-end
-
-class PersistenceFactory
-  @storage = {}
-
-  def self.storage_for(name)
-    @storage[name] ||= BreakerBox::MemoryStorage.new
-  end
-
-  def self.reset!
-    @storage = {}
-  end
-end
+require 'breaker_box'
+require 'breaker_box/persistence_factories/memory'
+require 'breaker_box/persistence_factories/redis'
 
 class MyWorld
   def fail(breaker)
@@ -30,4 +14,8 @@ end
 
 World do
   MyWorld.new
+end
+
+After do
+  Timecop.return
 end
