@@ -23,15 +23,14 @@ describe BreakerBox::Storage::Memory do
 
   it "gets the last failure time" do
     subject.fail!(one_hour_ago)
-    subject.fail!(time)    
+    subject.fail!(time)
     subject.last_failure_time.should == time
   end
 
   it "gets the failure times in a given time span" do
     subject.fail!(one_hour_ago)
-    subject.fail!(time)    
+    subject.fail!(time)
     subject.all_since(time - 60).should == [time]
     subject.all_since(one_hour_ago - 60).should == [one_hour_ago, time]
   end
-
 end

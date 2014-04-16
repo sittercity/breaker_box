@@ -1,4 +1,7 @@
 require 'timecop'
+require 'simplecov'
+
+SimpleCov.start
 
 class TestTask
   attr_accessor :has_run
