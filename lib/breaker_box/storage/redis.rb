@@ -24,14 +24,14 @@ module BreakerBox
       end
 
       def last_failure_time
-        parse_time @redis.lindex(@key, -1)
+        parse_time(@redis.lindex(@key, -1))
       end
 
       private
 
       def parse_time(date_string)
         DateTime.parse(date_string).to_time.utc
-      rescue
+      rescue ArgumentError
         nil
       end
 

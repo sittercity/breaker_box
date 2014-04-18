@@ -25,6 +25,11 @@ describe BreakerBox::Storage::Redis do
     subject.last_failure_time.should == one_hour_ago
   end
 
+  it "returns nil if the last failure time is not a date" do
+    redis.stub(:lindex).and_return("not a date")
+    subject.last_failure_time.should == nil
+  end
+
   it "gets the failure times in a given time span" do
     thirty_mins_ago = time - 1800
     two_hours_ago = time - 7200
