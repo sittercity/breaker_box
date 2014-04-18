@@ -21,7 +21,7 @@ describe BreakerBox::Storage::Redis do
   end
 
   it "gets the last failure time" do
-    redis.stub(:lindex).and_return(one_hour_ago)
+    redis.stub(:lindex).and_return(one_hour_ago.to_s)
     subject.last_failure_time.should == one_hour_ago
   end
 
