@@ -25,7 +25,6 @@ module BreakerBox
               raise BreakerBox::Errors::NilConnectionStringError.new("connection string is nil")
             elsif connection_string.empty?
               raise BreakerBox::Errors::EmptyConnectionStringError.new("connection string is empty")
-
             end
             ::Redis.new(:url => connection_string)
           )
