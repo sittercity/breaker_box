@@ -2,6 +2,10 @@ require 'timecop'
 require 'simplecov'
 require 'simplecov-rcov'
 
+unless ENV["REDIS_URI"]
+  puts "\n*** REDIS_URI can be set to control the testing connection ***\n\n"
+end
+
 SimpleCov.start do
   coverage_dir 'reports/coverage'
   formatter SimpleCov::Formatter::RcovFormatter

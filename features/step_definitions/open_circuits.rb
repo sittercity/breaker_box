@@ -9,5 +9,5 @@ When(/^I attempt to run a task through the circuit$/) do
 end
 
 Then(/^I should see that the task has not been run$/) do
-  @task.has_run.should be_false
+  @task.has_run.should be_falsey
 end

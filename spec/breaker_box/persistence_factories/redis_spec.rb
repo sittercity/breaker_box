@@ -14,7 +14,7 @@ describe BreakerBox::PersistenceFactories::Redis do
   end
 
   it "returns a memory storage instance" do
-    described_class.connection_string = "redis://localhost:6379"
+    described_class.connection_string = ENV["REDIS_URI"] || "redis://localhost:6379"
     described_class.reset!
     described_class.storage_for(:me).should be_a(BreakerBox::Storage::Redis)
   end

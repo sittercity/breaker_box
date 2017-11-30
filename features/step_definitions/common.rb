@@ -10,6 +10,6 @@ end
 
 Given(/^I have a redis persistence factory$/) do
   step 'I have reset breakerbox'
-  BreakerBox::PersistenceFactories::Redis.connection_string = "redis://localhost:6379"
+  BreakerBox::PersistenceFactories::Redis.connection_string = ENV["REDIS_URI"] || "redis://localhost:6379"
   BreakerBox.persistence_factory = BreakerBox::PersistenceFactories::Redis
 end

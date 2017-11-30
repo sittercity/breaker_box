@@ -22,25 +22,25 @@ describe BreakerBox::Circuit do
   }
 
   it 'gets constructed with state closed' do
-    subject.closed?.should be_true
+    subject.closed?.should be true
   end
 
   it 'gets constructed with state open' do
     persistence_with_failures = double("BreakerBox::Storage::Memory")
     persistence_with_failures.stub(:all_since).and_return([1, 1, 1, 1,])
     subject = described_class.new(persistence_with_failures)
-    subject.closed?.should be_false
+    subject.closed?.should be false
   end
 
   it 'runs the task and stays closed when the task passes' do
     subject.run task
-    task.has_run.should be_true
-    subject.closed?.should be_true
+    task.has_run.should be true
+    subject.closed?.should be true
   end
 
   it 'stays closed when the task passes a number of times under the threshold' do
     subject.run failing_task
-    subject.closed?.should be_true
+    subject.closed?.should be true
   end
 
   it 'opens when the fail threshold is met' do
@@ -48,7 +48,7 @@ describe BreakerBox::Circuit do
       subject.run failing_task
     end
 
-    subject.closed?.should be_false
+    subject.closed?.should be false
   end
 
   it 'runs a failure callback if specified when the task fails' do
@@ -67,7 +67,7 @@ describe BreakerBox::Circuit do
     end
 
     subject.run task
-    task.has_run.should_not be_true
+    task.has_run.should_not be true
   end
 
   it 'runs the task when half open' do
@@ -78,7 +78,7 @@ describe BreakerBox::Circuit do
     Timecop.freeze Time.now.utc + 5
 
     subject.run task
-    task.has_run.should be_true
+    task.has_run.should be true
   end
 
   it 'does not reopen immediately after re-closing' do
@@ -89,11 +89,11 @@ describe BreakerBox::Circuit do
     Timecop.freeze Time.now.utc + 5
 
     subject.run task
-    task.has_run.should be_true
-    subject.closed?.should be_true
+    task.has_run.should be true
+    subject.closed?.should be true
 
     subject.run failing_task
-    subject.closed?.should be_true
+    subject.closed?.should be true
   end
 
   it 'will tolerate fewer failures than the threshold within the time interval' do
@@ -102,6 +102,6 @@ describe BreakerBox::Circuit do
     Timecop.freeze Time.now.utc + 121
 
     subject.run failing_task
-    subject.closed?.should be_true
+    subject.closed?.should be true
   end
 end
