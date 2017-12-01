@@ -14,6 +14,6 @@ Gem::Specification.new do |s|
   s.summary = 'Sittercity\'s Circuit Breaker Gem'
   s.files = Dir['lib/**/*.rb']
   s.require_paths = ['lib', 'spec']
-  s.add_runtime_dependency('redis', '~> 3.0.7')
-  s.add_development_dependency('json', '1.7.7')
+  s.add_runtime_dependency('redis', '< 4')
+  s.add_development_dependency('json', '< 2')
 end

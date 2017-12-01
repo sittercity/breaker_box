@@ -8,12 +8,12 @@ When(/^I attempt to run a task through through the circuit$/) do
 end
 
 Then(/^I should see that the task has been run$/) do
-  @task.has_run.should be_true
+  @task.has_run.should be true
 end
 
 Then(/^I should see that the circuit remains closed$/) do
   new_circuit = BreakerBox.circuit_for(:test)
-  new_circuit.closed?.should be_true
+  new_circuit.closed?.should be true
 end
 
 When(/^I provide a failure callback$/) do
@@ -41,5 +41,5 @@ end
 
 Then(/^I should see that the circuit has opened$/) do
   new_circuit = BreakerBox.circuit_for(:test)
-  new_circuit.closed?.should be_false
+  new_circuit.closed?.should be false
 end

@@ -5,5 +5,5 @@ Given(/^a circuit that is currently half\-open$/) do
 end
 
 Then(/^I should see that the circuit has closed$/) do
-  @circuit.closed?.should be_true
+  @circuit.closed?.should be true
 end
