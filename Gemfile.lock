@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    breaker_box (3.0.0)
+    breaker_box (3.0.1)
       redis (< 4)
 
 GEM
