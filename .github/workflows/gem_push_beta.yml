@@ -12,6 +12,12 @@ jobs:
     env:
       BUNDLER_ACCESS_TOKEN: ${{ secrets.TECH_OPS_ACCESS_TOKEN }}
 
+    services:
+      redis:
+        image: redis:4-alpine
+        ports:
+          - 6379:6379
+
     steps:
       - uses: actions/checkout@v2
 
