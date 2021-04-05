@@ -1,0 +1,52 @@
+name: breaker_box branch
+
+on: [pull_request]
+
+env:
+  BUNDLER_ACCESS_TOKEN: ${{ secrets.TECH_OPS_ACCESS_TOKEN }}
+
+jobs:
+  build:
+    name: Test + Build + Publish
+    runs-on: ubuntu-16.04
+    env:
+      BUNDLER_ACCESS_TOKEN: ${{ secrets.TECH_OPS_ACCESS_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Ruby 2.7
+        uses: ruby/setup-ruby@v1
+
+      - name: Login To Google Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: gcr.io
+          username: _json_key
+          password: ${{ secrets.CONTAINER_REGISTRY_CREDENTIALS }}
+
+      - name: Configure Gem Cache
+        uses: actions/cache@v2
+        with:
+          path: vendor/bundle
+          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-gems-
+
+      - name: Setup Tests
+        run: |
+          gem install bundler:1.17.3
+          bundle config rubygems.pkg.github.com x-access-token:$BUNDLER_ACCESS_TOKEN
+          make setup
+
+      - name: Test
+        run: make test
+
+      - name: Publish to GPR
+        run: |
+          mkdir -p $HOME/.gem
+          touch $HOME/.gem/credentials
+          chmod 0600 $HOME/.gem/credentials
+          printf -- "---\n:github: Bearer ${{ secrets.GITHUB_TOKEN }}\n" > $HOME/.gem/credentials
+          SC_PRERELEASE=true gem build *.gemspec
+          gem push -v --KEY github --host https://rubygems.pkg.github.com/sittercity *.gem

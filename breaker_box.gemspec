@@ -3,10 +3,16 @@ $:.unshift lib unless $:.include?(lib)
 
 require 'breaker_box/version'
 
+prerelease = ENV['SC_PRERELEASE'] == 'true'
+
 Gem::Specification.new do |s|
   s.name = 'breaker_box'
   s.description = 'A Circuit Breaker system'
-  s.version = BreakerBox::VERSION
+  s.version = if prerelease
+                "#{BreakerBox::VERSION}.pre#{Time.now.to_i}"
+              else
+                BreakerBox::VERSION
+              end
   s.authors = ['Sitter City']
   s.email = ['dev@sittercity.com']
 
