@@ -18,13 +18,6 @@ jobs:
       - name: Set up Ruby 2.7
         uses: ruby/setup-ruby@v1
 
-      - name: Login To Google Container Registry
-        uses: azure/docker-login@v1
-        with:
-          login-server: gcr.io
-          username: _json_key
-          password: ${{ secrets.CONTAINER_REGISTRY_CREDENTIALS }}
-
       - name: Configure Gem Cache
         uses: actions/cache@v2
         with:
