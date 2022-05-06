@@ -3,6 +3,8 @@ name: breaker_box master
 on:
   push:
     branches: [ master ]
+    paths:
+      - '!**.md'
 
 jobs:
   build:
