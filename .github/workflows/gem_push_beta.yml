@@ -1,6 +1,9 @@
 name: breaker_box branch
 
-on: [pull_request]
+on:
+  pull_request:
+    paths-ignore:
+      - '**.md'
 
 env:
   BUNDLER_ACCESS_TOKEN: ${{ secrets.TECH_OPS_ACCESS_TOKEN }}
