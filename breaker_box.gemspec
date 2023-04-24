@@ -21,5 +21,5 @@ Gem::Specification.new do |s|
   s.files = Dir['lib/**/*.rb']
   s.require_paths = ['lib', 'spec']
   s.add_runtime_dependency('redis', '< 4')
-  s.add_development_dependency('json', '< 2')
+  s.add_development_dependency('json', '< 3')
 end
